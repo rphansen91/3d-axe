@@ -17,6 +17,7 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+const base = '/3d-axe'
 /**
  * Models
  */
@@ -27,7 +28,7 @@ const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
 const textureLoader = new THREE.TextureLoader()
-const bakedTexture = textureLoader.load('baked.png')
+const bakedTexture = textureLoader.load(`${base}/baked.png`)
 bakedTexture.flipY = false
 bakedTexture.encoding = THREE.sRGBEncoding
 
@@ -35,12 +36,12 @@ const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture })
 
 const cubeTextureLoader = new THREE.CubeTextureLoader()
 const environmentMap = cubeTextureLoader.load([
-    '/textures/environmentMaps/1/px.jpg',
-    '/textures/environmentMaps/1/nx.jpg',
-    '/textures/environmentMaps/1/py.jpg',
-    '/textures/environmentMaps/1/ny.jpg',
-    '/textures/environmentMaps/1/pz.jpg',
-    '/textures/environmentMaps/1/nz.jpg'
+    `${base}/textures/environmentMaps/1/px.jpg`,
+    `${base}/textures/environmentMaps/1/nx.jpg`,
+    `${base}/textures/environmentMaps/1/py.jpg`,
+    `${base}/textures/environmentMaps/1/ny.jpg`,
+    `${base}/textures/environmentMaps/1/pz.jpg`,
+    `${base}/textures/environmentMaps/1/nz.jpg`
 ])
 
 scene.background = environmentMap
@@ -48,7 +49,7 @@ scene.background = environmentMap
 let mixer = null
 
 gltfLoader.load(
-    '/models/axe.glb',
+    `${base}/models/axe.glb`,
     (gltf) =>
     {
         gltf.scene.traverse((child) => {
