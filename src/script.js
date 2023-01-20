@@ -49,7 +49,7 @@ scene.background = environmentMap
 let mixer = null
 
 gltfLoader.load(
-    `${base}/models/axe4.glb`,
+    `${base}/models/axe.glb`,
     (gltf) =>
     {
         gltf.scene.traverse((child) => {
