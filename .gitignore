@@ -1,0 +1,4 @@
+*.blend
+*.blend1
+dist/
+node_modules/
