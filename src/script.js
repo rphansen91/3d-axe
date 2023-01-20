@@ -17,7 +17,7 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-const base = '/3d-axe'
+const base = window.location.href.includes('github.io') ? '/3d-axe' : ''
 /**
  * Models
  */
@@ -28,7 +28,7 @@ const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
 const textureLoader = new THREE.TextureLoader()
-const bakedTexture = textureLoader.load(`${base}/baked.png`)
+const bakedTexture = textureLoader.load(`${base}/textures/materials/baked.png`)
 bakedTexture.flipY = false
 bakedTexture.encoding = THREE.sRGBEncoding
 
@@ -49,7 +49,7 @@ scene.background = environmentMap
 let mixer = null
 
 gltfLoader.load(
-    `${base}/models/axe.glb`,
+    `${base}/models/axe4.glb`,
     (gltf) =>
     {
         gltf.scene.traverse((child) => {
