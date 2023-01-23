@@ -40,7 +40,7 @@ Promise.all([
         `${base}/textures/environmentMaps/1/pz.jpg`,
         `${base}/textures/environmentMaps/1/nz.jpg`
     ]),
-    promisify(textureLoader.load.bind(textureLoader))(`${base}/textures/materials/baked.png`),
+    promisify(textureLoader.load.bind(textureLoader))(`${base}/textures/materials/baked.jpg`),
     promisify(gltfLoader.load.bind(gltfLoader))(`${base}/models/axe.glb`)
 ])
 .then(([environmentMap, bakedTexture, gltf]) => {
