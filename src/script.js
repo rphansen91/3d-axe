@@ -18,6 +18,7 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 const base = window.location.href.includes('github.io') ? '/3d-axe' : ''
+
 /**
  * Models
  */
@@ -27,38 +28,39 @@ dracoLoader.setDecoderPath('/draco/')
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
-const textureLoader = new THREE.TextureLoader()
-const bakedTexture = textureLoader.load(`${base}/textures/materials/baked.png`)
-bakedTexture.flipY = false
-bakedTexture.encoding = THREE.sRGBEncoding
-
-const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture })
-
 const cubeTextureLoader = new THREE.CubeTextureLoader()
-const environmentMap = cubeTextureLoader.load([
-    `${base}/textures/environmentMaps/1/px.jpg`,
-    `${base}/textures/environmentMaps/1/nx.jpg`,
-    `${base}/textures/environmentMaps/1/py.jpg`,
-    `${base}/textures/environmentMaps/1/ny.jpg`,
-    `${base}/textures/environmentMaps/1/pz.jpg`,
-    `${base}/textures/environmentMaps/1/nz.jpg`
-])
+const textureLoader = new THREE.TextureLoader()
 
-scene.background = environmentMap
+Promise.all([
+    promisify(cubeTextureLoader.load.bind(cubeTextureLoader))([
+        `${base}/textures/environmentMaps/1/px.jpg`,
+        `${base}/textures/environmentMaps/1/nx.jpg`,
+        `${base}/textures/environmentMaps/1/py.jpg`,
+        `${base}/textures/environmentMaps/1/ny.jpg`,
+        `${base}/textures/environmentMaps/1/pz.jpg`,
+        `${base}/textures/environmentMaps/1/nz.jpg`
+    ]),
+    promisify(textureLoader.load.bind(textureLoader))(`${base}/textures/materials/baked.png`),
+    promisify(gltfLoader.load.bind(gltfLoader))(`${base}/models/axe.glb`)
+])
+.then(([environmentMap, bakedTexture, gltf]) => {
+    const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture })
+
+    bakedTexture.flipY = false
+    bakedTexture.encoding = THREE.sRGBEncoding
+
+    gltf.scene.traverse((child) => {
+        child.material = bakedMaterial
+    })
+    gltf.scene.scale.set(2, 2, 2)
+
+    scene.background = environmentMap
+    scene.add(gltf.scene)
+})
 
 let mixer = null
 
-gltfLoader.load(
-    `${base}/models/axe.glb`,
-    (gltf) =>
-    {
-        gltf.scene.traverse((child) => {
-            child.material = bakedMaterial
-        })
-        gltf.scene.scale.set(2, 2, 2)
-        scene.add(gltf.scene)
-    }
-)
+
 
 /**
  * Floor
@@ -177,3 +179,11 @@ const tick = () =>
 }
 
 tick()
+
+function promisify (fn) {
+    return (...args) => {
+        return new Promise((res, rej) => {
+            fn(...args, res, undefined, rej)
+        })
+    }
+}
